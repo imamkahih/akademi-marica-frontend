@@ -1,30 +1,54 @@
-export default function Alert() {
+import { faCircleCheck, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+
+export default function Alert({ type, show, message, setShow, withTimeout }) {
+  const [color, setColor] = useState("");
+  const [classColor, setClassColor] = useState("");
+  useEffect(() => {
+    if (withTimeout) {
+      setTimeout(() => {
+        setShow(false);
+      }, 3000);
+    }
+  }, [show]);
+  useEffect(() => {
+    switch (type) {
+      case "success":
+        setClassColor("text-green-500 bg-green-50 border-green-500");
+        setColor("green");
+        break;
+      case "info":
+        setClassColor("text-blue-500 bg-blue-50 border-blue-500");
+        setColor("blue");
+        break;
+      case "warning":
+        setClassColor("text-yellow-500 bg-yellow-50 border-yellow-500");
+        setColor("yellow");
+        break;
+      case "error":
+        setClassColor("text-red-500 bg-red-50 border-red-500");
+        setColor("red");
+        break;
+      default:
+        break;
+    }
+  }, [type]);
+
   return (
     <>
-      <div className="fixed inset-x-0 top-0 flex items-center justify-center mt-7">
+      <div
+        className={`${
+          show ? "flex" : "hidden"
+        }  fixed inset-x-0 top-0 items-center justify-center mt-7`}
+      >
         <div className="w-auto">
           <div
-            className="flex p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+            className={`${classColor} flex p-3 text-sm  border rounded-lg`}
             role="alert"
           >
-            <svg
-              aria-hidden="true"
-              className="flex-shrink-0 inline w-5 h-5 mr-3"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            <span className="sr-only">Info</span>
-            <div>
-              <span className="font-medium">Info alert!</span> Change a few
-              things up and try submitting again.
-            </div>
+            <span className="sr-only">{type}</span>
+            <div>{message}</div>
           </div>
         </div>
       </div>
