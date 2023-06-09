@@ -4,6 +4,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Index from "./pages/Index";
 import DashboardAdmin from "./pages/admin/Dashboard";
+import DashboardInstructor from "./pages/instructor/Dashboard";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <DashboardAdmin />,
+  },
+  {
+    path: "/instructor",
+    element: <DashboardInstructor />,
   },
 ]);
 

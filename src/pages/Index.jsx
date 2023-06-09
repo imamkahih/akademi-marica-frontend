@@ -23,24 +23,59 @@ export default function Index() {
         .required("Silahkan isi email anda."),
       password: Yup.string().required("Silahkan isi password anda"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       dispatch(setLoading(true));
       postLogin(values)
         .then((response) => {
-          console.log("response", response);
-          dispatch(
-            setAlert({
-              type: "success",
-              message: response.message,
-              show: true,
-            })
-          );
+          if (response.status === 200) {
+            if (response.role === "1") {
+              const token = response.access_token.split("|")[1];
+              localStorage.setItem("role", response.role);
+              localStorage.setItem("token", token);
+              dispatch(
+                setAlert({
+                  type: "success",
+                  show: true,
+                  message: "Login Berhasil, selamat datang Admin.",
+                })
+              );
+            } else if (response.role === "2") {
+              const token = response.access_token.split("|")[1];
+              localStorage.setItem("role", response.role);
+              localStorage.setItem("token", token);
+              dispatch(
+                setAlert({
+                  type: "success",
+                  message:
+                    "Login Berhasil, selamat datang " + response.data.name,
+                  show: true,
+                })
+              );
+            } else {
+              dispatch(
+                setAlert({
+                  type: "error",
+                  message: "Silahkan untuk masuk pada aplikasi mobile",
+                  show: true,
+                })
+              );
+            }
+          } else {
+            dispatch(
+              setAlert({
+                type: "error",
+                message: "Email atau password salah.",
+                show: true,
+              })
+            );
+          }
         })
         .catch((error) => {
           console.error(error);
         })
         .finally(() => {
           dispatch(setLoading(false));
+          resetForm();
         });
     },
   });
