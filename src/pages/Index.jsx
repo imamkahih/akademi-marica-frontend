@@ -7,8 +7,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert, setLoading } from "../redux/notificationReducer";
 import { postLogin } from "../services/auth";
 import Alert from "../components/Alert";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Index() {
+  const navigate = useNavigate();
+  const roleUser = localStorage.getItem("role");
+  useEffect(() => {
+    if (roleUser === "1") {
+      navigate("/admin");
+    }
+    if (roleUser === "2") {
+      navigate("/instructor");
+    }
+  }, []);
+
   const isLoading = useSelector((state) => state.notification.loading);
   const alert = useSelector((state) => state.notification.alert);
   const dispatch = useDispatch();
