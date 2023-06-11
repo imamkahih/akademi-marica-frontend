@@ -2,12 +2,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/logo-big.svg";
+import { useDispatch } from "react-redux";
+import { closeConfirm, openConfirm } from "../redux/notificationReducer";
+import { logout } from "../redux/userReducer";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [sidebar, setSidebar] = useState(false);
   const toogleSidebar = () => {
     setSidebar(!sidebar);
   };
+  const handleLogout = () => {
+    dispatch(
+      openConfirm({
+        message: "Apakah anda ingin logout?",
+        confirm: performLogout, // Pass the reference to the function instead of the function itself
+      })
+    );
+  };
+
+  const performLogout = () => {
+    dispatch(logout());
+    localStorage.clear();
+    navigate("/");
+    dispatch(closeConfirm());
+  };
+
   return (
     <>
       <button
@@ -90,6 +112,14 @@ export default function Sidebar() {
                 className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
               >
                 <span className="flex-1 ml-3 whitespace-nowrap">Products</span>
+              </a>
+            </li>
+            <li>
+              <a
+                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
+                onClick={() => handleLogout()}
+              >
+                <span className="flex-1 ml-3 whitespace-nowrap">Log Out</span>
               </a>
             </li>
           </ul>

@@ -183,7 +183,7 @@ export default function Index() {
                     type="submit"
                     className="w-full text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                   >
-                    Sign in
+                    Log in
                   </button>
                 </div>
               </form>
