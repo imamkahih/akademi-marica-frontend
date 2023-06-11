@@ -7,24 +7,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert, setLoading } from "../redux/notificationReducer";
 import { postLogin } from "../services/auth";
 import Alert from "../components/Alert";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginSuccess } from "../redux/userReducer";
+import { useEffect } from "react";
 
 export default function Index() {
   const navigate = useNavigate();
-  const roleUser = localStorage.getItem("role");
+  const isLoading = useSelector((state) => state.notification.loading);
+  const alert = useSelector((state) => state.notification.alert);
+  const dispatch = useDispatch();
+  const currentRole = localStorage.getItem("role");
+  const currentToken = localStorage.getItem("token");
+
   useEffect(() => {
-    if (roleUser === "1") {
+    if (currentRole !== null && currentToken !== null) {
+      const data = { role: currentRole, token: currentToken };
+      dispatch(loginSuccess(data));
+    }
+    if (currentRole === "1") {
       navigate("/admin");
     }
-    if (roleUser === "2") {
+    if (currentRole === "2") {
       navigate("/instructor");
     }
   }, []);
 
-  const isLoading = useSelector((state) => state.notification.loading);
-  const alert = useSelector((state) => state.notification.alert);
-  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -41,10 +48,12 @@ export default function Index() {
       postLogin(values)
         .then((response) => {
           if (response.status === 200) {
+            const token = response.access_token.split("|")[1];
+            const role = response.role;
             if (response.role === "1") {
-              const token = response.access_token.split("|")[1];
-              localStorage.setItem("role", response.role);
+              localStorage.setItem("role", role);
               localStorage.setItem("token", token);
+              dispatch(loginSuccess({ role: role, token: token }));
               dispatch(
                 setAlert({
                   type: "success",
@@ -52,10 +61,11 @@ export default function Index() {
                   message: "Login Berhasil, selamat datang Admin.",
                 })
               );
+              navigate("/admin");
             } else if (response.role === "2") {
-              const token = response.access_token.split("|")[1];
-              localStorage.setItem("role", response.role);
+              localStorage.setItem("role", role);
               localStorage.setItem("token", token);
+              dispatch(loginSuccess({ role: role, token: token }));
               dispatch(
                 setAlert({
                   type: "success",
@@ -64,6 +74,7 @@ export default function Index() {
                   show: true,
                 })
               );
+              navigate("/instructor");
             } else {
               dispatch(
                 setAlert({

@@ -1,15 +1,26 @@
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DashboardAdmin from "./pages/admin/Dashboard";
 import InstructorManagement from "./pages/admin/InstructorManagement";
 import DashboardInstructor from "./pages/instructor/Dashboard";
 import CoursesManagement from "./pages/instructor/CoursesManagement";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "./redux/userReducer";
 
 const roleUser = localStorage.getItem("role");
+const tokenUser = localStorage.getItem("token");
 
 export default function App() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (roleUser && tokenUser) {
+      dispatch(loginSuccess({ role: roleUser, token: tokenUser }));
+    }
+  }, []);
+
   return (
     <>
       <Routes>
@@ -53,9 +64,11 @@ export default function App() {
 }
 
 function AdminElement({ children }) {
-  if (roleUser === "1") {
+  const token = useSelector((state) => state.user.token);
+  const role = useSelector((state) => state.user.role);
+  if (token && role === "1") {
     return <>{children}</>;
-  } else if (roleUser === "2") {
+  } else if (token && role === "2") {
     return <Navigate to={"/instructor"} />;
   } else {
     return <Navigate to={"/"} />;
@@ -63,9 +76,11 @@ function AdminElement({ children }) {
 }
 
 function InstructorElement({ children }) {
-  if (roleUser === "2") {
+  const token = useSelector((state) => state.user.token);
+  const role = useSelector((state) => state.user.role);
+  if (token && role === "2") {
     return <>{children}</>;
-  } else if (roleUser === "1") {
+  } else if (token && role === "1") {
     return <Navigate to={"/admin"} />;
   } else {
     return <Navigate to={"/"} />;
