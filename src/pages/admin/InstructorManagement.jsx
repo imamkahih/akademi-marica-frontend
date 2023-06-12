@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Sidebar from "../../components/Sidebar";
-import { setAlert } from "../../redux/notificationReducer";
-import { getInstructor } from "../../services/admin";
+import {
+  closeConfirm,
+  openConfirm,
+  setAlert,
+} from "../../redux/notificationReducer";
+import { deleteInstructor, getInstructor } from "../../services/admin";
 
 export default function InstructorManagement() {
   const navigate = useNavigate();
@@ -14,6 +18,7 @@ export default function InstructorManagement() {
   const confirm = useSelector((state) => state.notification.confirm);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
+  const [id, setId] = useState(null);
   const [dataInstructor, setDataInstructor] = useState(null);
   useEffect(() => {
     getInstructor(token)
@@ -24,6 +29,27 @@ export default function InstructorManagement() {
   }, []);
   const handleAdd = () => {
     navigate("/admin/instructor/add");
+  };
+  const handleDelete = () => {
+    dispatch(
+      openConfirm({
+        message: "Apakah anda ingin menghapus itu?",
+        confirm: performDelete,
+      })
+    );
+  };
+  const performDelete = () => {
+    deleteInstructor(id, token)
+      .then((response) => console.log("response", response))
+      .catch((error) => console.log("error", error));
+    dispatch(closeConfirm());
+    dispatch(
+      setAlert({
+        type: "success",
+        message: "Berhasil dihapus",
+        show: true,
+      })
+    );
   };
 
   return (
@@ -97,6 +123,10 @@ export default function InstructorManagement() {
                         <button
                           type="button"
                           className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 "
+                          onClick={() => {
+                            handleDelete();
+                            setId(item.id);
+                          }}
                         >
                           Hapus
                         </button>

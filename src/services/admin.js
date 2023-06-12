@@ -13,3 +13,38 @@ export const getInstructor = async (token) => {
     console.log("error", error);
   }
 };
+
+export const postInstructor = async (values, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/manage-instructors`,
+      values,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("error", error.response.data);
+    return error.response.data;
+  }
+};
+
+export const deleteInstructor = async (id, token) => {
+  console.log("id", id);
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/manage-instructors/` + id,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
