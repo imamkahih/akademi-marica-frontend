@@ -3,7 +3,11 @@ import { useState } from "react";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/logo-big.svg";
 import { useDispatch } from "react-redux";
-import { closeConfirm, openConfirm } from "../redux/notificationReducer";
+import {
+  closeConfirm,
+  openConfirm,
+  setAlert,
+} from "../redux/notificationReducer";
 import { logout } from "../redux/userReducer";
 import { useNavigate } from "react-router-dom";
 
@@ -26,8 +30,15 @@ export default function Sidebar() {
   const performLogout = () => {
     dispatch(logout());
     localStorage.clear();
-    navigate("/");
     dispatch(closeConfirm());
+    dispatch(
+      setAlert({
+        type: "success",
+        message: "Berhasil logout",
+        show: true,
+      })
+    );
+    navigate("/");
   };
 
   return (
