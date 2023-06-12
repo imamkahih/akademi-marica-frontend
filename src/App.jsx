@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DashboardAdmin from "./pages/admin/Dashboard";
 import InstructorManagement from "./pages/admin/InstructorManagement";
+import AddInstructor from "./pages/admin/AddInstructor";
 import DashboardInstructor from "./pages/instructor/Dashboard";
 import CoursesManagement from "./pages/instructor/CoursesManagement";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginSuccess } from "./redux/userReducer";
 
 const roleUser = localStorage.getItem("role");
@@ -14,7 +15,6 @@ const tokenUser = localStorage.getItem("token");
 
 export default function App() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   useEffect(() => {
     if (roleUser && tokenUser) {
       dispatch(loginSuccess({ role: roleUser, token: tokenUser }));
@@ -42,6 +42,14 @@ export default function App() {
           }
         />
         <Route
+          path="/admin/instructor/add"
+          element={
+            <AdminElement>
+              <AddInstructor />
+            </AdminElement>
+          }
+        />
+        <Route
           path="/instructor"
           element={
             <InstructorElement>
@@ -64,8 +72,8 @@ export default function App() {
 }
 
 function AdminElement({ children }) {
-  const token = useSelector((state) => state.user.token);
-  const role = useSelector((state) => state.user.role);
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
   if (token && role === "1") {
     return <>{children}</>;
   } else if (token && role === "2") {
@@ -76,8 +84,8 @@ function AdminElement({ children }) {
 }
 
 function InstructorElement({ children }) {
-  const token = useSelector((state) => state.user.token);
-  const role = useSelector((state) => state.user.role);
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
   if (token && role === "2") {
     return <>{children}</>;
   } else if (token && role === "1") {

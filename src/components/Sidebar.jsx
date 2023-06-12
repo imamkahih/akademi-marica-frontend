@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/logo-big.svg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   closeConfirm,
   openConfirm,
@@ -14,9 +14,18 @@ import { useNavigate } from "react-router-dom";
 export default function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const role = useSelector((state) => state.user.role);
   const [sidebar, setSidebar] = useState(false);
   const toogleSidebar = () => {
     setSidebar(!sidebar);
+  };
+  const routeDashboard = () => {
+    if (role === "1") {
+      navigate("/admin");
+    }
+    if (role === "2") {
+      navigate("/instructor");
+    }
   };
   const handleLogout = () => {
     dispatch(
@@ -26,7 +35,6 @@ export default function Sidebar() {
       })
     );
   };
-
   const performLogout = () => {
     dispatch(logout());
     localStorage.clear();
@@ -87,44 +95,35 @@ export default function Sidebar() {
           <ul className="space-y-2 font-medium">
             <li>
               <a
-                href="#"
                 className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
+                onClick={() => routeDashboard()}
               >
                 <span className="ml-3">Dashboard</span>
               </a>
             </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-              >
-                <span className="flex-1 ml-3 whitespace-nowrap">Kanban</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-              >
-                <span className="flex-1 ml-3 whitespace-nowrap">Inbox</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-              >
-                <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-              >
-                <span className="flex-1 ml-3 whitespace-nowrap">Products</span>
-              </a>
-            </li>
+            {/* Halaman Admin */}
+            {role === "1" && (
+              <li>
+                <a
+                  className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
+                  onClick={() => navigate("/admin/instructor")}
+                >
+                  <span className="ml-3">Managemen Instruktur</span>
+                </a>
+              </li>
+            )}
+
+            {/* Halaman Instruktur */}
+            {role === "2" && (
+              <li>
+                <a
+                  className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
+                  onClick={() => navigate("/instructor/courses")}
+                >
+                  <span className="ml-3">Manajemen Kursus</span>
+                </a>
+              </li>
+            )}
             <li>
               <a
                 className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
