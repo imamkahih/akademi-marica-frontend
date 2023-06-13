@@ -50,6 +50,7 @@ export default function Index() {
           if (response.status === 200) {
             const token = response.access_token.split("|")[1];
             const role = response.role;
+            const id_user = response.data.id;
             if (response.role === "1") {
               localStorage.setItem("role", role);
               localStorage.setItem("token", token);
@@ -65,6 +66,7 @@ export default function Index() {
             } else if (response.role === "2") {
               localStorage.setItem("role", role);
               localStorage.setItem("token", token);
+              localStorage.setItem("id_user", id_user);
               dispatch(loginSuccess({ role: role, token: token }));
               dispatch(
                 setAlert({

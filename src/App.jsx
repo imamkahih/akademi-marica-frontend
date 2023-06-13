@@ -7,6 +7,8 @@ import InstructorManagement from "./pages/admin/InstructorManagement";
 import AddInstructor from "./pages/admin/AddInstructor";
 import DashboardInstructor from "./pages/instructor/Dashboard";
 import CoursesManagement from "./pages/instructor/CoursesManagement";
+import AddCourse from "./pages/instructor/AddCourse";
+import DetailCourse from "./pages/instructor/DetailCourse";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "./redux/userReducer";
 
@@ -62,6 +64,22 @@ export default function App() {
           element={
             <InstructorElement>
               <CoursesManagement />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/:id"
+          element={
+            <InstructorElement>
+              <DetailCourse />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/add"
+          element={
+            <InstructorElement>
+              <AddCourse />
             </InstructorElement>
           }
         />

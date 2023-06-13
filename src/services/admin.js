@@ -33,7 +33,6 @@ export const postInstructor = async (values, token) => {
 };
 
 export const deleteInstructor = async (id, token) => {
-  console.log("id", id);
   try {
     const response = await axios.delete(
       `${BASE_URL}/manage-instructors/` + id,

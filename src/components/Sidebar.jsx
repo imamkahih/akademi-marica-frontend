@@ -9,7 +9,7 @@ import {
   setAlert,
 } from "../redux/notificationReducer";
 import { logout } from "../redux/userReducer";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -19,14 +19,7 @@ export default function Sidebar() {
   const toogleSidebar = () => {
     setSidebar(!sidebar);
   };
-  const routeDashboard = () => {
-    if (role === "1") {
-      navigate("/admin");
-    }
-    if (role === "2") {
-      navigate("/instructor");
-    }
-  };
+
   const handleLogout = () => {
     dispatch(
       openConfirm({
@@ -93,36 +86,48 @@ export default function Sidebar() {
             </div>
           </div>
           <ul className="space-y-2 font-medium">
-            <li>
-              <a
-                className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-                onClick={() => routeDashboard()}
-              >
-                <span className="ml-3">Dashboard</span>
-              </a>
-            </li>
             {/* Halaman Admin */}
             {role === "1" && (
-              <li>
-                <a
-                  className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-                  onClick={() => navigate("/admin/instructor")}
-                >
-                  <span className="ml-3">Managemen Instruktur</span>
-                </a>
-              </li>
+              <>
+                <li>
+                  <NavLink
+                    to="/admin"
+                    className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
+                  >
+                    <span className="ml-3">Dashboard</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/admin/instructor"
+                    className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
+                  >
+                    <span className="ml-3">Managemen Instruktur</span>
+                  </NavLink>
+                </li>
+              </>
             )}
 
             {/* Halaman Instruktur */}
             {role === "2" && (
-              <li>
-                <a
-                  className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg  hover:bg-pink-300 "
-                  onClick={() => navigate("/instructor/courses")}
-                >
-                  <span className="ml-3">Manajemen Kursus</span>
-                </a>
-              </li>
+              <>
+                <li>
+                  <NavLink
+                    to="/instructor"
+                    className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
+                  >
+                    <span className="ml-3">Dashboard</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/instructor/courses"
+                    className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
+                  >
+                    <span className="ml-3">Managemen Kursus</span>
+                  </NavLink>
+                </li>
+              </>
             )}
             <li>
               <a

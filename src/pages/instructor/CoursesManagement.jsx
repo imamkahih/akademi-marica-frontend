@@ -1,22 +1,82 @@
 import React from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Sidebar from "../../components/Sidebar";
-import { setAlert } from "../../redux/notificationReducer";
-import { getCourses } from "../../services/instructor";
+import {
+  closeConfirm,
+  openConfirm,
+  setAlert,
+} from "../../redux/notificationReducer";
+import {
+  deleteCourses,
+  getCategories,
+  getCourses,
+} from "../../services/instructor";
 
 export default function CoursesManagement() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const confirm = useSelector((state) => state.notification.confirm);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
+  const [myCourses, setMyCourses] = useState(null);
+  const [categories, setCategories] = useState(null);
   useEffect(() => {
+    getCategories(token)
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((error) => console.log("error", error));
     getCourses(token)
-      .then((response) => console.log("response", response))
+      .then((response) => {
+        setMyCourses(response.courses);
+      })
       .catch((error) => console.log("error", error));
   }, []);
+  const handleAdd = () => {
+    navigate("/instructor/courses/add");
+  };
+  const categoryName = (id) => {
+    if (categories) {
+      const category = categories.filter(
+        (data) => data.id.toString() === id.toString()
+      )[0];
+      return category.category_name;
+    }
+  };
+  const handleDelete = (id) => {
+    dispatch(
+      openConfirm({
+        message: "Apakah anda ingin menghapus itu?",
+        confirm: () => performDelete(id),
+      })
+    );
+  };
+  const performDelete = (id) => {
+    deleteCourses(id, token)
+      .then((response) => {
+        if (response.status === 200) {
+          getCourses(token)
+            .then((response) => {
+              setMyCourses(response.courses);
+            })
+            .catch((error) => console.log("error", error));
+        }
+      })
+      .catch((error) => console.log("error", error));
+    dispatch(closeConfirm());
+    dispatch(
+      setAlert({
+        type: "success",
+        message: "Berhasil dihapus",
+        show: true,
+      })
+    );
+  };
 
   return (
     <>
@@ -53,14 +113,20 @@ export default function CoursesManagement() {
           Tambah Kursus
         </button>
         <div className="relative overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 ">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Nama
+                  Nama kursus
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Email
+                  kategori
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  harga
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  thumbnail
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Opsi
@@ -68,43 +134,60 @@ export default function CoursesManagement() {
               </tr>
             </thead>
             <tbody>
-              {/* {dataInstructor ? (
-                dataInstructor.map((item) => (
-                  <tr className="bg-white border-b " key={item.id}>
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
-                    >
-                      {item.name}
-                    </th>
-                    <td className="px-6 py-4">{item.email}</td>
-                    <td className="px-6 py-4 ">
-                      <div className="space-x-3">
+              {myCourses ? (
+                myCourses.map((item) => {
+                  return (
+                    <tr className="bg-white border-b" key={item.id}>
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      >
+                        {item.course_name}
+                      </th>
+                      <td className="px-6 py-4">
+                        {categoryName(item.id_category)}
+                      </td>
+                      <td className="px-6 py-4">{item.price}</td>
+                      <td className="px-6 py-4">
+                        <img
+                          className="h-auto max-w-xs"
+                          src={item.thumbnail}
+                          alt="thumbnail image"
+                        />
+                      </td>
+                      <td className="px-6 py-4 flex space-x-3">
+                        <Link to={`/instructor/courses/${item.id}`}>
+                          <button
+                            type="button"
+                            className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                          >
+                            Lihat
+                          </button>
+                        </Link>
                         <button
                           type="button"
-                          className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center "
+                          className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
-                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 "
+                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2"
                           onClick={() => {
-                            handleDelete();
-                            setId(item.id);
+                            handleDelete(item.id);
                           }}
                         >
                           Hapus
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
-                <tr className="bg-white border-b ">
-                  <td>Tidak ada data</td>
+                <tr className="bg-white border-b">
+                  <td colSpan="5">Tidak ada data</td>
                 </tr>
-              )} */}
+              )}
             </tbody>
           </table>
         </div>

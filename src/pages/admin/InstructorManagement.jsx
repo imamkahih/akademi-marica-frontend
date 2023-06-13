@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
@@ -18,7 +17,6 @@ export default function InstructorManagement() {
   const confirm = useSelector((state) => state.notification.confirm);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
-  const [id, setId] = useState(null);
   const [dataInstructor, setDataInstructor] = useState(null);
   useEffect(() => {
     getInstructor(token)
@@ -30,17 +28,25 @@ export default function InstructorManagement() {
   const handleAdd = () => {
     navigate("/admin/instructor/add");
   };
-  const handleDelete = () => {
+  const handleDelete = (id) => {
     dispatch(
       openConfirm({
         message: "Apakah anda ingin menghapus itu?",
-        confirm: performDelete,
+        confirm: () => performDelete(id),
       })
     );
   };
-  const performDelete = () => {
+  const performDelete = (id) => {
     deleteInstructor(id, token)
-      .then((response) => console.log("response", response))
+      .then((response) => {
+        if (response.status === 200) {
+          getInstructor(token)
+            .then((response) => {
+              setDataInstructor(response);
+            })
+            .catch((error) => console.log("error", error));
+        }
+      })
       .catch((error) => console.log("error", error));
     dispatch(closeConfirm());
     dispatch(
@@ -124,8 +130,7 @@ export default function InstructorManagement() {
                           type="button"
                           className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 "
                           onClick={() => {
-                            handleDelete();
-                            setId(item.id);
+                            handleDelete(item.id);
                           }}
                         >
                           Hapus
