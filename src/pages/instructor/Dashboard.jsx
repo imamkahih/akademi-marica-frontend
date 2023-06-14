@@ -32,7 +32,7 @@ export default function Dashboard() {
         withTimeout
       />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-2xl font-bold  text-gray-900  ">
+        <h2 className="text-xl font-bold text-gray-900">
           Dashboard Instructor
         </h2>
       </div>

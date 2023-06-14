@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import Loading from "../../components/Loading";
 import Sidebar from "../../components/Sidebar";
 import {
   closeConfirm,
   openConfirm,
   setAlert,
+  setLoading,
 } from "../../redux/notificationReducer";
 import {
   deleteCourses,
@@ -20,12 +22,14 @@ import {
 export default function CoursesManagement() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.notification.loading);
   const confirm = useSelector((state) => state.notification.confirm);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
   const [myCourses, setMyCourses] = useState(null);
   const [categories, setCategories] = useState(null);
   useEffect(() => {
+    dispatch(setLoading(true));
     getCategories(token)
       .then((response) => {
         setCategories(response.data);
@@ -35,7 +39,8 @@ export default function CoursesManagement() {
       .then((response) => {
         setMyCourses(response.courses);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log("error", error))
+      .finally(() => dispatch(setLoading(false)));
   }, []);
   const handleAdd = () => {
     navigate("/instructor/courses/add");
@@ -57,6 +62,7 @@ export default function CoursesManagement() {
     );
   };
   const performDelete = (id) => {
+    dispatch(setLoading(true));
     deleteCourses(id, token)
       .then((response) => {
         if (response.status === 200) {
@@ -64,7 +70,8 @@ export default function CoursesManagement() {
             .then((response) => {
               setMyCourses(response.courses);
             })
-            .catch((error) => console.log("error", error));
+            .catch((error) => console.log("error", error))
+            .finally(() => dispatch(setLoading(false)));
         }
       })
       .catch((error) => console.log("error", error));
@@ -101,10 +108,9 @@ export default function CoursesManagement() {
         }}
         withTimeout
       />
+      <Loading isLoading={isLoading} />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-2xl font-bold  text-gray-900  ">
-          Manajemen Kursus
-        </h2>
+        <h2 className="text-xl font-bold  text-gray-900">Manajemen Kursus</h2>
         <button
           type="button"
           className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center "

@@ -21,7 +21,7 @@ export const postInstructor = async (values, token) => {
       values,
       {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -42,6 +42,19 @@ export const deleteInstructor = async (id, token) => {
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const getAllUser = async (token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/all-user`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log("error", error);

@@ -21,6 +21,7 @@ export default function () {
     initialValues: {
       name: "",
       email: "",
+      phone_number: "",
       password: "",
       confirmPassword: "",
     },
@@ -29,6 +30,10 @@ export default function () {
       email: Yup.string()
         .email("Email tidak valid")
         .required("Silahkan isi dengan email"),
+      phone_number: Yup.string()
+        .min(10, "Minimal 10 nomor")
+        .matches(/^[0-9]+$/, "Silahkan isi dengan nomor")
+        .required("Silahkan isi nomor telpon"),
       password: Yup.string()
         .min(6, "Minimal 6 karakter")
         .required("Silahkan isi password anda"),
@@ -38,16 +43,14 @@ export default function () {
         .required("Silahkan isi konfirmasi password"),
     }),
     onSubmit: (values, { resetForm }) => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("phone_number", values.phone_number);
       dispatch(setLoading(true));
-      const { name, email, password, confirmPassword } = values;
-      let data = {
-        name: name,
-        email: email,
-        password: password,
-      };
-      postInstructor(data, token)
+      postInstructor(formData, token)
         .then((response) => {
-          console.log("response", response);
           if (response.status === 200) {
             dispatch(
               setAlert({
@@ -98,7 +101,7 @@ export default function () {
         withTimeout
       />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-2xl font-bold  text-gray-900">Tambah Instruktur</h2>
+        <h2 className="text-xl font-bold  text-gray-900">Tambah Instruktur</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-5">
             <label
@@ -143,6 +146,29 @@ export default function () {
             {formik.touched.email && formik.errors.email ? (
               <p className="mt-2 text-sm text-red-600 dark:text-red-500">
                 {formik.errors.email}
+              </p>
+            ) : null}
+          </div>
+          <div className="mb-5">
+            <label
+              htmlFor="phone_number"
+              className="block mb-2 text-sm font-medium text-gray-900 "
+            >
+              Nomor Telpon
+            </label>
+            <input
+              type="text"
+              id="phone_number"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5 "
+              placeholder="08xxxxxxxxx"
+              required
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.phone_number}
+            />
+            {formik.touched.phone_number && formik.errors.phone_number ? (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                {formik.errors.phone_number}
               </p>
             ) : null}
           </div>

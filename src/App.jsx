@@ -11,6 +11,9 @@ import AddCourse from "./pages/instructor/AddCourse";
 import DetailCourse from "./pages/instructor/DetailCourse";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "./redux/userReducer";
+import AddTopics from "./pages/instructor/AddTopics";
+import DetailTopics from "./pages/instructor/DetailTopics";
+import UserManagement from "./pages/admin/UserManagement";
 
 const roleUser = localStorage.getItem("role");
 const tokenUser = localStorage.getItem("token");
@@ -52,6 +55,14 @@ export default function App() {
           }
         />
         <Route
+          path="/admin/user"
+          element={
+            <AdminElement>
+              <UserManagement />
+            </AdminElement>
+          }
+        />
+        <Route
           path="/instructor"
           element={
             <InstructorElement>
@@ -80,6 +91,22 @@ export default function App() {
           element={
             <InstructorElement>
               <AddCourse />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/topics/:id"
+          element={
+            <InstructorElement>
+              <DetailTopics />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/topics/add"
+          element={
+            <InstructorElement>
+              <AddTopics />
             </InstructorElement>
           }
         />

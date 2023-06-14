@@ -1,69 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Loading from "../../components/Loading";
 import Sidebar from "../../components/Sidebar";
-import {
-  closeConfirm,
-  openConfirm,
-  setAlert,
-  setLoading,
-} from "../../redux/notificationReducer";
-import { deleteInstructor, getInstructor } from "../../services/admin";
+import { setAlert } from "../../redux/notificationReducer";
+import { getAllUser } from "../../services/admin";
 
-export default function InstructorManagement() {
+export default function UserManagement() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const confirm = useSelector((state) => state.notification.confirm);
   const isLoading = useSelector((state) => state.notification.loading);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
-  const [dataInstructor, setDataInstructor] = useState(null);
+  const [students, setStudents] = useState(null);
   useEffect(() => {
-    dispatch(setLoading(true));
-    getInstructor(token)
+    getAllUser(token)
       .then((response) => {
-        setDataInstructor(response);
+        console.log("response", response);
+        setStudents(response.students);
       })
       .catch((error) => console.log("error", error))
-      .finally(() => dispatch(setLoading(false)));
+      .finally(() => console.log("students", students));
   }, []);
-  const handleAdd = () => {
-    navigate("/admin/instructor/add");
-  };
-  const handleDelete = (id) => {
-    dispatch(
-      openConfirm({
-        message: "Apakah anda ingin menghapus itu?",
-        confirm: () => performDelete(id),
-      })
-    );
-  };
-  const performDelete = (id) => {
-    dispatch(setLoading(true));
-    deleteInstructor(id, token)
-      .then((response) => {
-        if (response.status === 200) {
-          getInstructor(token)
-            .then((response) => {
-              setDataInstructor(response);
-            })
-            .catch((error) => console.log("error", error))
-            .finally(() => dispatch(setLoading(false)));
-        }
-      })
-      .catch((error) => console.log("error", error));
-    dispatch(closeConfirm());
-    dispatch(
-      setAlert({
-        type: "success",
-        message: "Berhasil dihapus",
-        show: true,
-      })
-    );
-  };
 
   return (
     <>
@@ -90,16 +53,7 @@ export default function InstructorManagement() {
         withTimeout
       />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-xl font-bold  text-gray-900">
-          Manajemen Instruktur
-        </h2>
-        <button
-          type="button"
-          className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center "
-          onClick={() => handleAdd()}
-        >
-          Tambah Instruktur
-        </button>
+        <h2 className="text-xl font-bold  text-gray-900">Manajemen User</h2>
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-500 ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
@@ -116,7 +70,7 @@ export default function InstructorManagement() {
               </tr>
             </thead>
             <tbody>
-              {dataInstructor ? (
+              {/* {dataInstructor ? (
                 dataInstructor.map((item) => (
                   <tr className="bg-white border-b " key={item.id}>
                     <th
@@ -151,7 +105,7 @@ export default function InstructorManagement() {
                 <tr className="bg-white border-b ">
                   <td>Tidak ada data</td>
                 </tr>
-              )}
+              )} */}
             </tbody>
           </table>
         </div>

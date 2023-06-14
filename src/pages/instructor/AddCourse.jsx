@@ -22,9 +22,11 @@ export default function AddCourse() {
   const id_instructor = localStorage.getItem("id_user");
   const [categories, setCategories] = useState(null);
   useEffect(() => {
+    dispatch(setLoading(true));
     getCategories(token)
       .then((response) => setCategories(response.data))
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log("error", error))
+      .finally(() => dispatch(setLoading(false)));
   }, []);
   const formik = useFormik({
     initialValues: {
@@ -95,7 +97,6 @@ export default function AddCourse() {
               })
             );
           }
-          console.log("response", response);
         })
         .catch((error) => console.log("error", error))
         .finally(() => {
@@ -129,7 +130,7 @@ export default function AddCourse() {
         withTimeout
       />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-2xl font-bold  text-gray-900  ">Tambah Kursus</h2>
+        <h2 className="text-xl font-bold  text-gray-900">Tambah Kursus</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-5">
             <label

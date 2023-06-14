@@ -102,7 +102,15 @@ export default function Sidebar() {
                     to="/admin/instructor"
                     className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
                   >
-                    <span className="ml-3">Managemen Instruktur</span>
+                    <span className="ml-3">Manajemen Instruktur</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/admin/user"
+                    className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
+                  >
+                    <span className="ml-3">Manajemen User</span>
                   </NavLink>
                 </li>
               </>
@@ -124,7 +132,7 @@ export default function Sidebar() {
                     to="/instructor/courses"
                     className="flex items-center p-2 text-gray-900 border-2 border-pink-200 rounded-lg hover:bg-pink-300"
                   >
-                    <span className="ml-3">Managemen Kursus</span>
+                    <span className="ml-3">Manajemen Kursus</span>
                   </NavLink>
                 </li>
               </>
