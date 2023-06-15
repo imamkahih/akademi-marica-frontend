@@ -25,6 +25,7 @@ export default function InstructorManagement() {
     dispatch(setLoading(true));
     getInstructor(token)
       .then((response) => {
+        console.log("response", response);
         setDataInstructor(response);
       })
       .catch((error) => console.log("error", error))
@@ -111,12 +112,15 @@ export default function InstructorManagement() {
                   Email
                 </th>
                 <th scope="col" className="px-6 py-3">
+                  Nomor Telpon
+                </th>
+                <th scope="col" className="px-6 py-3">
                   Opsi
                 </th>
               </tr>
             </thead>
             <tbody>
-              {dataInstructor ? (
+              {dataInstructor && dataInstructor.length > 0 ? (
                 dataInstructor.map((item) => (
                   <tr className="bg-white border-b " key={item.id}>
                     <th
@@ -126,24 +130,21 @@ export default function InstructorManagement() {
                       {item.name}
                     </th>
                     <td className="px-6 py-4">{item.email}</td>
+                    <td className="px-6 py-4">
+                      {item.phone_number
+                        ? item.phone_number
+                        : "Belum menambahkan"}
+                    </td>
                     <td className="px-6 py-4 ">
-                      <div className="space-x-3">
-                        <button
-                          type="button"
-                          className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center "
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 "
-                          onClick={() => {
-                            handleDelete(item.id);
-                          }}
-                        >
-                          Hapus
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 "
+                        onClick={() => {
+                          handleDelete(item.id);
+                        }}
+                      >
+                        Hapus
+                      </button>
                     </td>
                   </tr>
                 ))

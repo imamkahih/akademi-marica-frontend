@@ -1,30 +1,54 @@
 import { useFormik } from "formik";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import Loading from "../../components/Loading";
 import Sidebar from "../../components/Sidebar";
 import { setAlert, setLoading } from "../../redux/notificationReducer";
-import { getCategories, postCourses } from "../../services/instructor";
+import {
+  getCategories,
+  getCoursesDetail,
+  updateCourses,
+} from "../../services/instructor";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
-import Loading from "../../components/Loading";
 
-export default function AddCourse() {
+export default function EditCourse() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoading = useSelector((state) => state.notification.loading);
   const confirm = useSelector((state) => state.notification.confirm);
   const alert = useSelector((state) => state.notification.alert);
   const token = useSelector((state) => state.user.token);
-  const id_instructor = localStorage.getItem("id_user");
   const [categories, setCategories] = useState(null);
+  const id_instructor = localStorage.getItem("id_user");
+  const { id } = useParams();
   useEffect(() => {
     dispatch(setLoading(true));
-    getCategories(token)
-      .then((response) => setCategories(response.data))
+    getCoursesDetail(id, token)
+      .then((response) => {
+        const {
+          course_name,
+          id_category,
+          thumbnail,
+          teaser_url,
+          price,
+          course_description,
+        } = response.data;
+        formik.setValues({
+          ...formik.values,
+          course_name,
+          id_category,
+          thumbnail: null, // Isi dengan null karena thumbnail tidak dapat diisi langsung dari detail kursus
+          teaser_url,
+          price,
+          course_description,
+        });
+        getCategories(token)
+          .then((response) => setCategories(response.data))
+          .catch((error) => console.log("error", error));
+      })
       .catch((error) => console.log("error", error))
       .finally(() => dispatch(setLoading(false)));
   }, []);
@@ -77,14 +101,15 @@ export default function AddCourse() {
       formData.append("price", values.price);
       formData.append("teaser_url", values.teaser_url);
       formData.append("thumbnail", values.thumbnail);
+      formData.append("_method", "PATCH");
       dispatch(setLoading(true));
-      postCourses(formData, token)
+      updateCourses(id, formData, token)
         .then((response) => {
           if (response.status === 200) {
             dispatch(
               setAlert({
                 type: "success",
-                message: "Kursus berhasil dibuat",
+                message: "Kursus berhasil diubah",
                 show: true,
               })
             );
@@ -105,7 +130,6 @@ export default function AddCourse() {
         });
     },
   });
-
   return (
     <>
       <Loading isLoading={isLoading} />
@@ -131,7 +155,7 @@ export default function AddCourse() {
         withTimeout
       />
       <div className="p-4 sm:ml-64 space-y-3">
-        <h2 className="text-xl font-bold  text-gray-900">Tambah Kursus</h2>
+        <h2 className="text-xl font-bold  text-gray-900">Edit Kursus</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-5">
             <label

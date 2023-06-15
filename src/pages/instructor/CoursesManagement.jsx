@@ -140,7 +140,7 @@ export default function CoursesManagement() {
               </tr>
             </thead>
             <tbody>
-              {myCourses ? (
+              {myCourses && myCourses.length > 0 ? (
                 myCourses.map((item) => {
                   return (
                     <tr className="bg-white border-b" key={item.id}>
@@ -170,12 +170,14 @@ export default function CoursesManagement() {
                             Lihat
                           </button>
                         </Link>
-                        <button
-                          type="button"
-                          className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
-                        >
-                          Edit
-                        </button>
+                        <Link to={`/instructor/courses/edit/${item.id}`}>
+                          <button
+                            type="button"
+                            className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                          >
+                            Edit
+                          </button>
+                        </Link>
                         <button
                           type="button"
                           className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2"

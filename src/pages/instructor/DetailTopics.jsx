@@ -60,7 +60,7 @@ export default function DetailTopics() {
           Detail Topik Pembelajaran
         </h2>
         <div className="p-3 border rounded-lg">
-          <h2 className="text-xl text-gray-900">
+          <h2 className="text-lg text-gray-900">
             {topicsDetail && topicsDetail.title}
           </h2>
           <h2 className="text-base text-gray-900">

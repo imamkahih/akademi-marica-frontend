@@ -39,6 +39,18 @@ export const postCourses = async (data, token) => {
     console.log("error", error);
   }
 };
+export const updateCourses = async (id, data, token) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/courses/${id}`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
 
 export const deleteCourses = async (id, token) => {
   try {
@@ -82,6 +94,19 @@ export const getTopicsDetail = async (id, token) => {
 export const postTopics = async (data, token) => {
   try {
     const response = await axios.post(`${BASE_URL}/course-topics`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const updateTopics = async (id, data, token) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/course-topics/` + id, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
