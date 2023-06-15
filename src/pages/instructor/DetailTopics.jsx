@@ -2,13 +2,22 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Alert from "../../components/Alert";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Loading from "../../components/Loading";
 import Sidebar from "../../components/Sidebar";
-import { setAlert } from "../../redux/notificationReducer";
-import { getLessonTopics, getTopicsDetail } from "../../services/instructor";
+import {
+  closeConfirm,
+  openConfirm,
+  setAlert,
+  setLoading,
+} from "../../redux/notificationReducer";
+import {
+  deleteLessonTopics,
+  getLessonTopics,
+  getTopicsDetail,
+} from "../../services/instructor";
 
 export default function DetailTopics() {
   const dispatch = useDispatch();
@@ -21,15 +30,53 @@ export default function DetailTopics() {
   const [topicsDetail, setTopicsDetail] = useState(null);
   const [lessonTopics, setLessonTopics] = useState(null);
   useEffect(() => {
+    dispatch(setLoading(true));
     getTopicsDetail(id, token)
       .then((response) => {
         setTopicsDetail(response.data);
         getLessonTopics(id, token)
-          .then((response) => console.log("response", response))
-          .catch((error) => console.log("error", error));
+          .then((response) => {
+            setLessonTopics(response.data);
+          })
+          .catch((error) => console.log("error", error))
+          .finally(() => dispatch(setLoading(false)));
       })
       .catch((error) => console.log("error", error));
   }, []);
+  const handleAdd = (id) => {
+    navigate("/instructor/courses/topics/lessons/add", { state: { id: id } });
+  };
+  const handleDelete = (id) => {
+    dispatch(
+      openConfirm({
+        message: "Apakah anda ingin menghapus itu?",
+        confirm: () => performDelete(id),
+      })
+    );
+  };
+  const performDelete = (id_lesson) => {
+    dispatch(setLoading(true));
+    deleteLessonTopics(id_lesson, token)
+      .then((response) => {
+        if (response.status === 200) {
+          getLessonTopics(id, token)
+            .then((response) => {
+              setLessonTopics(response.data);
+            })
+            .catch((error) => console.log("error", error))
+            .finally(() => dispatch(setLoading(false)));
+        }
+      })
+      .catch((error) => console.log("error", error));
+    dispatch(closeConfirm());
+    dispatch(
+      setAlert({
+        type: "success",
+        message: "Berhasil dihapus",
+        show: true,
+      })
+    );
+  };
 
   return (
     <>
@@ -66,23 +113,42 @@ export default function DetailTopics() {
           <h2 className="text-base text-gray-900">
             {topicsDetail && topicsDetail.description}
           </h2>
-          {topicsDetail && topicsDetail.course.length > 0 ? (
+        </div>
+        <div className="flex justify-between">
+          <h2 className="text-xl font-bold text-gray-900">
+            Materi Pembelajaran
+          </h2>
+          <button
+            type="button"
+            className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+            onClick={() => handleAdd(topicsDetail.id)}
+          >
+            Tambah Materi
+          </button>
+        </div>
+        <div className="flex flex-col justify-between">
+          {lessonTopics && lessonTopics.length > 0 ? (
             <div className="flex flex-col gap-y-3">
-              {/* {topicsDetail.course.map((course) => (
-                <div className="flex flex-row justify-between">
-                  <h2 className="border-b text-gray-500">
-                    <span className="text-gray-900">{topic.title}</span> (
-                    {topic.lessons.length} pelajaran)
-                  </h2>
+              {lessonTopics.map((lesson) => (
+                <div
+                  className="flex flex-row justify-between items-center"
+                  key={lesson.id}
+                >
+                  <div className="">
+                    <h2 className="text-gray-500">
+                      <span className="text-gray-900">{lesson.title}</span>{" "}
+                      {lesson.content_type}
+                    </h2>
+                  </div>
                   <div className="flex space-x-1">
-                    <Link to={`/instructor/courses/topics/${topic.id}`}>
-                      <button
-                        type="button"
-                        className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
-                      >
-                        Lihat
-                      </button>
-                    </Link>
+                    {/* <Link to={`/instructor/courses/topics/lessons/add`}> */}
+                    <button
+                      type="button"
+                      className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                    >
+                      Lihat
+                    </button>
+                    {/* </Link> */}
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 text-xs text-center"
@@ -93,14 +159,14 @@ export default function DetailTopics() {
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-3 text-xs"
                       onClick={() => {
-                        handleDelete(topic.id);
+                        handleDelete(lesson.id);
                       }}
                     >
                       Hapus
                     </button>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </div>
           ) : (
             <div className="">Belum menambahkan topik pembelajaran</div>

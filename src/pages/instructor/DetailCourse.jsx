@@ -152,7 +152,7 @@ export default function DetailCourse() {
           {courseDetail && courseDetail.topics.length > 0 ? (
             <div className="flex flex-col gap-y-3">
               {courseDetail.topics.map((topic) => (
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between" key={topic.id}>
                   <h2 className="border-b text-gray-500">
                     <span className="text-gray-900">{topic.title}</span> (
                     {topic.lessons.length} pelajaran)

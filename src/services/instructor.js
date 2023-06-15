@@ -132,7 +132,33 @@ export const deleteTopics = async (id, token) => {
 
 export const getLessonTopics = async (id, token) => {
   try {
-    const response = await axios.get(`${BASE_URL}/course-lessons`, {
+    const response = await axios.get(`${BASE_URL}/course-lessons/topic/` + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const postLessonTopics = async (data, token) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/course-lessons`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const deleteLessonTopics = async (id, token) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/course-lessons/` + id, {
       headers: {
         Authorization: "Bearer " + token,
       },
