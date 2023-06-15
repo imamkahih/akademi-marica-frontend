@@ -30,15 +30,16 @@ export default function AddLesson() {
     initialValues: {
       id_course_topics: id,
       title: "",
-      content: null,
       content_type: "",
+      video: null,
+      pdf: null,
+      text: null,
       description: "",
     },
     validationSchema: Yup.object({
       title: Yup.string()
         .required("Silahkan isi judul materi pembelajaran")
         .max(100, "Maksimal 100 karakter"),
-      content: Yup.string().required("Silahkan isi konten pembelajaran"),
       content_type: Yup.string().required(
         "Silahkan isi jenis  materi pembelajaran"
       ),
@@ -48,32 +49,32 @@ export default function AddLesson() {
     }),
     onSubmit: (values) => {
       console.log("values", values);
-      dispatch(setLoading(true));
-      postLessonTopics(values, token)
-        .then((response) => {
-          if (response.status === 200) {
-            dispatch(
-              setAlert({
-                type: "success",
-                message: "Topik pembelajaran berhasil dibuat",
-                show: true,
-              })
-            );
-            navigate(
-              `/instructor/courses/topics/` + response.data.id_course_topics
-            );
-          } else {
-            dispatch(
-              setAlert({
-                type: "error",
-                message: "Gagal",
-                show: true,
-              })
-            );
-          }
-        })
-        .catch((error) => console.log("error", error))
-        .finally(() => dispatch(setLoading(false)));
+      // dispatch(setLoading(true));
+      // postLessonTopics(values, token)
+      //   .then((response) => {
+      //     if (response.status === 200) {
+      //       dispatch(
+      //         setAlert({
+      //           type: "success",
+      //           message: "Topik pembelajaran berhasil dibuat",
+      //           show: true,
+      //         })
+      //       );
+      //       navigate(
+      //         `/instructor/courses/topics/` + response.data.id_course_topics
+      //       );
+      //     } else {
+      //       dispatch(
+      //         setAlert({
+      //           type: "error",
+      //           message: "Gagal",
+      //           show: true,
+      //         })
+      //       );
+      //     }
+      //   })
+      //   .catch((error) => console.log("error", error))
+      //   .finally(() => dispatch(setLoading(false)));
     },
   });
   const handleContentTypeChange = (e) => {
@@ -163,32 +164,32 @@ export default function AddLesson() {
           {contentType && contentType === "video" ? (
             <div className="mb-5">
               <label
-                htmlFor="content"
+                htmlFor="video"
                 className="block mb-2 text-sm font-medium text-gray-900 "
               >
                 Link Youtube Video Pembelajaran
               </label>
               <input
                 type="text"
-                id="content"
-                name="content"
+                id="video"
+                name="video"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5 "
                 placeholder="Link youtube video pembelajaran"
                 required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.content}
+                value={formik.values.video}
               />
-              {formik.touched.content && formik.errors.content ? (
+              {formik.touched.video && formik.errors.video ? (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {formik.errors.title}
+                  {formik.errors.video}
                 </p>
               ) : null}
             </div>
           ) : contentType && contentType === "pdf" ? (
             <div className="mb-5">
               <label
-                htmlFor="thumbnail"
+                htmlFor="pdf"
                 className="block mb-2 text-sm font-medium text-gray-900 "
               >
                 File PDF
@@ -196,14 +197,11 @@ export default function AddLesson() {
               <input
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none "
                 aria-describedby="file_input_help"
-                id="thumbnail"
+                id="pdf"
                 type="file"
-                name="thumbnail"
+                name="pdf"
                 onChange={(event) => {
-                  formik.setFieldValue(
-                    "thumbnail",
-                    event.currentTarget.files[0]
-                  );
+                  formik.setFieldValue("pdf", event.currentTarget.files[0]);
                 }}
                 onBlur={formik.handleBlur}
                 required
@@ -212,18 +210,18 @@ export default function AddLesson() {
                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                 id="file_input_help"
               >
-                PDF (Maksimal 2 MB).
+                PDF (Maksimal 10 MB).
               </p>
-              {formik.touched.thumbnail && formik.errors.thumbnail ? (
+              {formik.touched.pdf && formik.errors.pdf ? (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {formik.errors.thumbnail}
+                  {formik.errors.pdf}
                 </p>
               ) : null}
             </div>
           ) : contentType && contentType === "text" ? (
             <div className="mb-5">
               <label
-                htmlFor="content"
+                htmlFor="text"
                 className="block mb-2 text-sm font-medium text-gray-900 "
               >
                 Text Pembelajaran
@@ -232,20 +230,20 @@ export default function AddLesson() {
                 value={editorValue}
                 onChange={(value) => {
                   handleEditorChange(value);
-                  formik.setFieldValue("content", value); // Update nilai yang dikelola oleh Formik
+                  formik.setFieldValue("text", value); // Update nilai yang dikelola oleh Formik
                 }}
               />
               <input
                 type="hidden"
-                id="content"
-                name="content"
-                value={formik.values.content}
+                id="text"
+                name="text"
+                value={formik.values.text}
                 onBlur={formik.handleBlur}
               />
 
-              {formik.touched.content && formik.errors.content ? (
+              {formik.touched.text && formik.errors.text ? (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {formik.errors.title}
+                  {formik.errors.text}
                 </p>
               ) : null}
             </div>
@@ -253,31 +251,34 @@ export default function AddLesson() {
             ""
           )}
 
-          {contentType && formik.values.content && (
-            <div className="mb-5">
-              <label
-                htmlFor="description"
-                className="block mb-2 text-sm font-medium text-gray-900 "
-              >
-                Deskripsi Materi
-              </label>
-              <textarea
-                id="description"
-                rows="3"
-                name="description"
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 "
-                placeholder="Tulis deskripsi kursus disini..."
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.description}
-              ></textarea>
-              {formik.touched.description && formik.errors.description ? (
-                <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {formik.errors.description}
-                </p>
-              ) : null}
-            </div>
-          )}
+          {contentType &&
+            (formik.values.text ||
+              formik.values.video ||
+              formik.values.pdf) && (
+              <div className="mb-5">
+                <label
+                  htmlFor="description"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Deskripsi Materi
+                </label>
+                <textarea
+                  id="description"
+                  rows="3"
+                  name="description"
+                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 "
+                  placeholder="Tulis deskripsi kursus disini..."
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.description}
+                ></textarea>
+                {formik.touched.description && formik.errors.description ? (
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                    {formik.errors.description}
+                  </p>
+                ) : null}
+              </div>
+            )}
           <button
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-3 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
