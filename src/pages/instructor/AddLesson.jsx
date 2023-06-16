@@ -49,32 +49,32 @@ export default function AddLesson() {
     }),
     onSubmit: (values) => {
       console.log("values", values);
-      // dispatch(setLoading(true));
-      // postLessonTopics(values, token)
-      //   .then((response) => {
-      //     if (response.status === 200) {
-      //       dispatch(
-      //         setAlert({
-      //           type: "success",
-      //           message: "Topik pembelajaran berhasil dibuat",
-      //           show: true,
-      //         })
-      //       );
-      //       navigate(
-      //         `/instructor/courses/topics/` + response.data.id_course_topics
-      //       );
-      //     } else {
-      //       dispatch(
-      //         setAlert({
-      //           type: "error",
-      //           message: "Gagal",
-      //           show: true,
-      //         })
-      //       );
-      //     }
-      //   })
-      //   .catch((error) => console.log("error", error))
-      //   .finally(() => dispatch(setLoading(false)));
+      dispatch(setLoading(true));
+      postLessonTopics(values, token)
+        .then((response) => {
+          if (response.status === 200) {
+            dispatch(
+              setAlert({
+                type: "success",
+                message: "Topik pembelajaran berhasil dibuat",
+                show: true,
+              })
+            );
+            navigate(
+              `/instructor/courses/topics/` + response.data.id_course_topics
+            );
+          } else {
+            dispatch(
+              setAlert({
+                type: "error",
+                message: "Gagal",
+                show: true,
+              })
+            );
+          }
+        })
+        .catch((error) => console.log("error", error))
+        .finally(() => dispatch(setLoading(false)));
     },
   });
   const handleContentTypeChange = (e) => {
@@ -175,7 +175,6 @@ export default function AddLesson() {
                 name="video"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 block w-full p-2.5 "
                 placeholder="Link youtube video pembelajaran"
-                required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.video}
@@ -204,7 +203,6 @@ export default function AddLesson() {
                   formik.setFieldValue("pdf", event.currentTarget.files[0]);
                 }}
                 onBlur={formik.handleBlur}
-                required
               />
               <p
                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
