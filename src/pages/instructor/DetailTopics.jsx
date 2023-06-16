@@ -176,7 +176,7 @@ export default function DetailTopics() {
               ))}
             </div>
           ) : (
-            <div className="">Belum menambahkan topik pembelajaran</div>
+            <div className="">Belum menambahkan materi pembelajaran</div>
           )}
         </div>
       </div>
