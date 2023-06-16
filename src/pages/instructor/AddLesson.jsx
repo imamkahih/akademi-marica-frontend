@@ -44,19 +44,49 @@ export default function AddLesson() {
         "Silahkan isi jenis  materi pembelajaran"
       ),
       text: Yup.string().test("no-empty-line", "Teks boleh kosong", (value) => {
-        if (value && value !== "<p><br></p>") {
+        if (!value || value !== "<p><br></p>") {
           return true;
         }
         return false;
       }),
+      video: Yup.string()
+        .test("youtube-link", "Invalid YouTube link", function (value) {
+          if (!value) {
+            return true;
+          }
+          const youtubeLinkRegex =
+            /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?([a-zA-Z0-9_-]{11}).*$/;
+          return youtubeLinkRegex.test(value);
+        })
+        .nullable(),
+      pdf: Yup.mixed()
+        .test("fileFormat", "Hanya file PDF yang diperbolehkan", (value) => {
+          if (value) {
+            return value.type === "application/pdf";
+          }
+          return true; // Allow empty field, you can modify this behavior
+        })
+        .test("fileSize", "Ukuran file tidak boleh melebihi 10 MB", (value) => {
+          if (value) {
+            return value.size <= 10 * 1024 * 1024; // 10 MB in bytes
+          }
+          return true; // Allow empty field, you can modify this behavior
+        }),
       description: Yup.string().required(
         "Silahkan isi deskripsi materi pembelajaran"
       ),
     }),
     onSubmit: (values) => {
-      console.log("values", values);
+      const formData = new FormData();
+      formData.append("id_course_topics", values.id_course_topics);
+      formData.append("title", values.title);
+      formData.append("content_type", values.content_type);
+      formData.append("video", values.video);
+      formData.append("pdf", values.pdf);
+      formData.append("text", values.text);
+      formData.append("description", values.description);
       dispatch(setLoading(true));
-      postLessonTopics(values, token)
+      postLessonTopics(formData, token)
         .then((response) => {
           console.log("response", response);
           if (response.status === 200) {
@@ -86,10 +116,10 @@ export default function AddLesson() {
   });
   const handleContentTypeChange = (e) => {
     formik.handleChange(e);
-    formik.setFieldValue("pdf", null);
-    formik.setFieldValue("video", null);
-    formik.setFieldValue("text", null);
-    formik.setFieldValue("description", null);
+    formik.setFieldValue("pdf", "");
+    formik.setFieldValue("video", "");
+    formik.setFieldValue("text", "");
+    setEditorValue("");
     setContentType(e.target.value);
   };
   return (
@@ -240,7 +270,7 @@ export default function AddLesson() {
                 value={editorValue}
                 onChange={(value) => {
                   handleEditorChange(value);
-                  formik.setFieldValue("text", value); // Update nilai yang dikelola oleh Formik
+                  formik.setFieldValue("text", value);
                 }}
               />
               <input
@@ -250,7 +280,6 @@ export default function AddLesson() {
                 value={formik.values.text}
                 onBlur={formik.handleBlur}
               />
-
               {formik.touched.text && formik.errors.text ? (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
                   {formik.errors.text}
