@@ -34,7 +34,6 @@ export default function DetailLesson() {
     dispatch(setLoading(true));
     getDetailLessonTopics(id, token)
       .then((response) => {
-        console.log("response", response.data);
         setLessonDetail(response.data);
         setVideoUrl(response.data.content);
       })

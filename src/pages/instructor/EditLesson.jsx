@@ -90,7 +90,6 @@ export default function EditLesson() {
       dispatch(setLoading(true));
       updateLessonTopics(idLesson, formData, token)
         .then((response) => {
-          console.log("response", response);
           if (response.status === 200) {
             dispatch(
               setAlert({
@@ -128,7 +127,6 @@ export default function EditLesson() {
     dispatch(setLoading(true));
     getDetailLessonTopics(id, token)
       .then((response) => {
-        console.log("response", response);
         const { title, id_course_topics } = response.data;
         formik.setValues({
           ...formik.values,

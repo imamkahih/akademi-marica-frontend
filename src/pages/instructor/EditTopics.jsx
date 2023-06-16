@@ -23,7 +23,6 @@ export default function EditTopics() {
     dispatch(setLoading(true));
     getTopicsDetail(id, token)
       .then((response) => {
-        console.log("response", response);
         const { description, title, id_courses } = response.data;
         formik.setValues({
           ...formik.values,

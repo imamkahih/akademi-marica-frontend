@@ -25,7 +25,6 @@ export default function InstructorManagement() {
     dispatch(setLoading(true));
     getInstructor(token)
       .then((response) => {
-        console.log("response", response);
         setDataInstructor(response);
       })
       .catch((error) => console.log("error", error))

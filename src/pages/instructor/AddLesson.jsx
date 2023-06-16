@@ -88,7 +88,6 @@ export default function AddLesson() {
       dispatch(setLoading(true));
       postLessonTopics(formData, token)
         .then((response) => {
-          console.log("response", response);
           if (response.status === 200) {
             dispatch(
               setAlert({
