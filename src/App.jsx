@@ -17,6 +17,8 @@ import UserManagement from "./pages/admin/UserManagement";
 import EditCourse from "./pages/instructor/EditCourse";
 import EditTopics from "./pages/instructor/EditTopics";
 import AddLesson from "./pages/instructor/AddLesson";
+import DetailLesson from "./pages/instructor/DetailLesson";
+import EditLesson from "./pages/instructor/EditLesson";
 
 const roleUser = localStorage.getItem("role");
 const tokenUser = localStorage.getItem("token");
@@ -134,6 +136,22 @@ export default function App() {
           element={
             <InstructorElement>
               <AddLesson />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/topics/lessons/:id"
+          element={
+            <InstructorElement>
+              <DetailLesson />
+            </InstructorElement>
+          }
+        />
+        <Route
+          path="/instructor/courses/topics/lessons/edit/:id"
+          element={
+            <InstructorElement>
+              <EditLesson />
             </InstructorElement>
           }
         />

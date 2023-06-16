@@ -142,6 +142,18 @@ export const getLessonTopics = async (id, token) => {
     console.log("error", error);
   }
 };
+export const getDetailLessonTopics = async (id, token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/course-lessons/` + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
 
 export const postLessonTopics = async (data, token) => {
   try {
@@ -150,6 +162,23 @@ export const postLessonTopics = async (data, token) => {
         Authorization: "Bearer " + token,
       },
     });
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const updateLessonTopics = async (id, data, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/course-lessons/` + id,
+      data,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.log("error", error);

@@ -141,20 +141,27 @@ export default function DetailTopics() {
                     </h2>
                   </div>
                   <div className="flex space-x-1">
-                    {/* <Link to={`/instructor/courses/topics/lessons/add`}> */}
-                    <button
-                      type="button"
-                      className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                    <Link
+                      to={`/instructor/courses/topics/lessons/${lesson.id}`}
                     >
-                      Lihat
-                    </button>
-                    {/* </Link> */}
-                    <button
-                      type="button"
-                      className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 text-xs text-center"
+                      <button
+                        type="button"
+                        className="focus:outline-none btn text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                      >
+                        Lihat
+                      </button>
+                    </Link>
+
+                    <Link
+                      to={`/instructor/courses/topics/lessons/edit/${lesson.id}`}
                     >
-                      Edit
-                    </button>
+                      <button
+                        type="button"
+                        className="focus:outline-none btn text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg px-3 py-2 text-sm text-center"
+                      >
+                        Edit
+                      </button>
+                    </Link>
                     <button
                       type="button"
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg px-3 text-xs"
