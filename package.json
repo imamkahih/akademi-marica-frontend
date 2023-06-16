@@ -1,5 +1,6 @@
 {
   "name": "akademi-marica-frontend",
+  "homepage": "https://admin.akademi.marica.id/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
