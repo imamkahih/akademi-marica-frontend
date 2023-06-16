@@ -34,7 +34,7 @@ export default function AddLesson() {
       video: null,
       pdf: null,
       text: null,
-      description: "",
+      description: null,
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -43,6 +43,12 @@ export default function AddLesson() {
       content_type: Yup.string().required(
         "Silahkan isi jenis  materi pembelajaran"
       ),
+      text: Yup.string().test("no-empty-line", "Teks boleh kosong", (value) => {
+        if (value && value !== "<p><br></p>") {
+          return true;
+        }
+        return false;
+      }),
       description: Yup.string().required(
         "Silahkan isi deskripsi materi pembelajaran"
       ),
@@ -52,6 +58,7 @@ export default function AddLesson() {
       dispatch(setLoading(true));
       postLessonTopics(values, token)
         .then((response) => {
+          console.log("response", response);
           if (response.status === 200) {
             dispatch(
               setAlert({
@@ -79,7 +86,10 @@ export default function AddLesson() {
   });
   const handleContentTypeChange = (e) => {
     formik.handleChange(e);
-    formik.setFieldValue("content", "");
+    formik.setFieldValue("pdf", null);
+    formik.setFieldValue("video", null);
+    formik.setFieldValue("text", null);
+    formik.setFieldValue("description", null);
     setContentType(e.target.value);
   };
   return (
@@ -178,6 +188,7 @@ export default function AddLesson() {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.video}
+                required
               />
               {formik.touched.video && formik.errors.video ? (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
@@ -203,6 +214,7 @@ export default function AddLesson() {
                   formik.setFieldValue("pdf", event.currentTarget.files[0]);
                 }}
                 onBlur={formik.handleBlur}
+                required
               />
               <p
                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
@@ -249,34 +261,31 @@ export default function AddLesson() {
             ""
           )}
 
-          {contentType &&
-            (formik.values.text ||
-              formik.values.video ||
-              formik.values.pdf) && (
-              <div className="mb-5">
-                <label
-                  htmlFor="description"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Deskripsi Materi
-                </label>
-                <textarea
-                  id="description"
-                  rows="3"
-                  name="description"
-                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 "
-                  placeholder="Tulis deskripsi kursus disini..."
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.description}
-                ></textarea>
-                {formik.touched.description && formik.errors.description ? (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                    {formik.errors.description}
-                  </p>
-                ) : null}
-              </div>
-            )}
+          {contentType && (
+            <div className="mb-5">
+              <label
+                htmlFor="description"
+                className="block mb-2 text-sm font-medium text-gray-900 "
+              >
+                Deskripsi Materi
+              </label>
+              <textarea
+                id="description"
+                rows="3"
+                name="description"
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 "
+                placeholder="Tulis deskripsi kursus disini..."
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.description}
+              ></textarea>
+              {formik.touched.description && formik.errors.description ? (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                  {formik.errors.description}
+                </p>
+              ) : null}
+            </div>
+          )}
           <button
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-3 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
