@@ -66,7 +66,9 @@ export default function AddCourse() {
       price: Yup.string()
         .required("Silahkan isi harga kursus")
         .matches(/^[0-9]+$/, "Silahkan isi dengan angka"),
-      course_description: Yup.string().max(255, "Maksimal 255 karakter"),
+      course_description: Yup.string()
+        .max(255, "Maksimal 255 karakter")
+        .required("Silahkan isi deskripsi kursus"),
     }),
     onSubmit: (values) => {
       const formData = new FormData();
@@ -272,17 +274,18 @@ export default function AddCourse() {
               htmlFor="description"
               className="block mb-2 text-sm font-medium text-gray-900 "
             >
-              Deskripsi Kursus (opsional)
+              Deskripsi Kursus
             </label>
             <textarea
               id="description"
-              rows="3"
+              rows="2"
               name="course_description"
               className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-pink-500 focus:border-pink-500 "
               placeholder="Tulis deskripsi kursus disini..."
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.course_description}
+              required
             ></textarea>
             {formik.touched.course_description &&
             formik.errors.course_description ? (

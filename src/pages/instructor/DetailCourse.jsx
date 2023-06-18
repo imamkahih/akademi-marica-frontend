@@ -56,9 +56,9 @@ export default function DetailCourse() {
       })
     );
   };
-  const performDelete = (id) => {
+  const performDelete = (idCourse) => {
     dispatch(setLoading(true));
-    deleteTopics(id, token)
+    deleteTopics(idCourse, token)
       .then((response) => {
         if (response.status === 200) {
           getCoursesDetail(id, token)
