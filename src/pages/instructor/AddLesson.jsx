@@ -72,9 +72,9 @@ export default function AddLesson() {
           }
           return true; // Allow empty field, you can modify this behavior
         }),
-      description: Yup.string().required(
-        "Silahkan isi deskripsi materi pembelajaran"
-      ),
+      description: Yup.string()
+        .required("Silahkan isi deskripsi materi pembelajaran")
+        .max(255, "Maksimal 255 karakter"),
     }),
     onSubmit: (values) => {
       const formData = new FormData();
